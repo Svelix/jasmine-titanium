@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, sys, re, shutil, time, subprocess
+import os, sys, re, shutil, time, subprocess, platform
 from optparse import OptionParser
 
 def project_dir():
@@ -13,14 +13,25 @@ def resource_dir():
     sep = os.sep
     return re.sub("%(sep)sResources%(sep)s.+" % locals(), "%(sep)sResources" % locals(), script_dir)
 
+def titanium_base_path():
+    host_platform = platform.platform()
+    if re.search(r"linux", host_platform, re.I):
+        return os.path.expanduser("~/.titanium/mobilesdk/linux/")
+    elif re.search(r"darwin". host_platform, re.I):
+        return "/Library/Application\\ Support/Titanium/mobilesdk/osx/"
+    else:
+        return None
+
 def sdk_version():
     setting_path = os.path.join(project_dir(), ".settings", "com.appcelerator.titanium.mobile.prefs")
     version = ''
-    version_constant_name = "MOBILE_PROJECT_SDK_VERSION"
-    for line in open(setting_path, 'r'):
-        if line.startswith(version_constant_name):
-            version = re.sub(version_constant_name + "=", "", line.strip())
-        
+    if os.path.exists(setting_path):
+        version_constant_name = "MOBILE_PROJECT_SDK_VERSION"
+        for line in open(setting_path, 'r'):
+            if line.startswith(version_constant_name):
+                version = re.sub(version_constant_name + "=", "", line.strip())
+    else:
+        version = os.path.basename(sorted(os.listdir(titanium_base_path()))[-1])
     return version
 
 def options_temporary_path():
@@ -89,7 +100,7 @@ def run(platform):
     # not implemented
 
 def run_iphone_simulator():
-    system_command_path = "/Library/Application\ Support/Titanium/mobilesdk/osx/" + sdk_version() + "/iphone/builder.py"
+    system_command_path = os.path.join(titanium_base_path(), sdk_version(), "iphone/builder.py")
     if os.path.exists(system_command_path):
         command_path = system_command_path
     else:
@@ -104,7 +115,7 @@ def run_android_emulator(android_sdk_path):
         print "Please specify Android SDK Path."
         return False
 
-    system_command_path = "/Library/Application\ Support/Titanium/mobilesdk/osx/" + sdk_version() + "/android/builder.py"
+    system_command_path = os.path.join(titanium_base_path(), sdk_version(), "android/builder.py")
 
     if os.path.exists(system_command_path):
         command_path = system_command_path
