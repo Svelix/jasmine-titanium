@@ -125,8 +125,7 @@ def run_android_emulator(android_sdk_path):
 
     command = command_path + " run " + project_dir() + " " + android_sdk_path
     print "Installing..."
-    output = subprocess.check_output(command, shell=True)
-    print output
+    os.system(command)
 
 def main(argv):
     parser = create_option_parser()
