@@ -77,7 +77,7 @@ def create_option_parser():
             help="android or iphone. android is experimantal [default: iphone]", default="iphone", metavar="PLATFORM")
 
     parser.add_option("--android-sdk", dest="android_sdk_path", 
-            help="specify android sdk path. ", default="", metavar="ANDROID_SDK_PATH")
+            help="specify android sdk path. ", default=os.getenv('ANDROID_SDK', ''), metavar="ANDROID_SDK_PATH")
 
     parser.add_option("-r", "--reporter", dest="reporter", 
             help="display result to html or console. html is experimantal(html only for android) [defulat: console]", default="console", metavar="REPORTER")
