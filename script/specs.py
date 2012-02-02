@@ -138,7 +138,7 @@ def main(argv):
         log = os.open(options.output, os.O_WRONLY|os.O_CREAT)
         os.dup2(log, sys.stdout.fileno())
 
-    if options.reporter == 'console' and options.platform != 'android':
+    if options.reporter == 'console':
         setup_jasmine_titanium_app_console_js()
     else:
         setup_jasmine_titanium_app_webview_js()
